@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Veloce | Premium Cyberpunk Rental Experience</title>
+    <style>
+        :root {
+            --bg-main: #0b0f19;
+            --bg-card: #151c2c;
+            --bg-modal: #111827;
+            --accent: #3b82f6;
+            --accent-glow: rgba(59, 130, 246, 0.35);
+            --success: #10b981;
+            --success-glow: rgba(16, 185, 129, 0.2);
+            --danger: #ef4444;
+            --danger-glow: rgba(239, 68, 68, 0.2);
+            --text-heading: #f3f4f6;
+            --text-body: #9ca3af;
+            --text-muted: #6b7280;
+            --border: #1f2937;
+            --border-focus: #4b5563;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-body);
+            padding-bottom: 80px;
+            overflow-x: hidden;
+        }
+
+        /* Top Navigation Header */
+        header {
+            background-color: rgba(21, 28, 44, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            padding: 1.25rem 3rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            color: var(--text-heading);
+            font-size: 1.6rem;
+            font-weight: 800;
+            letter-spacing: -0.05em;
+        }
+
+        header h1 span {
+            color: var(--accent);
+        }
+
+        .header-tag {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            color: var(--accent);
+            padding: 0.4rem 0.8rem;
+            border-radius: 2rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        /* Layout Structure */
+        .container {
+            max-width: 1400px;
+            margin: 2.5rem auto;
+            padding: 0 2rem;
+        }
+
+        /* Search & Filters Controls */
+        .controls {
+            display: flex;
+            gap: 1.25rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .search-input, .filter-select {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-heading);
+            padding: 0.85rem 1.25rem;
+            border-radius: 0.75rem;
+            outline: none;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+        }
+
+        .search-input { 
+            flex: 1; 
+            min-width: 300px; 
+        }
+
+        .search-input:focus, .filter-select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        /* Dynamic Grid Layout */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+            gap: 2.5rem;
+        }
+
+        /* Premium Vehicle Cards */
+        .card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 1.25rem;
+            overflow: hidden;
+            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(59, 130, 246, 0.4);
+            box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.7), 0 0 15px 0 rgba(59, 130, 246, 0.1);
+        }
+
+        .card-img-wrapper {
+            position: relative;
+            height: 200px;
+            width: 100%;
+            overflow: hidden;
+            background-color: #1e293b;
+        }
+
+        .card-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .card:hover .card-img {
+            transform: scale(1.05);
+        }
+
+        .card-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.35rem 0.75rem;
+            border-radius: 2rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            backdrop-filter: blur(8px);
+        }
+
+        .card-badge.available { 
+            background-color: rgba(16, 185, 129, 0.15); 
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+        
+        .card-badge.rented { 
+            background-color: rgba(239, 68, 68, 0.15); 
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .card-body {
+            padding: 1.5rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .vehicle-type {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--accent);
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.35rem;
+        }
+
+        .vehicle-title {
+            color: var(--text-heading);
+            font-size: 1.35rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .info-stack {
+            border-top: 1px solid var(--border);
+            padding-top: 1rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.65rem;
+            font-size: 0.9rem;
+        }
+
+        .info-label { color: var(--text-muted); }
+        .info-value { color: var(--text-heading); font-weight: 500; }
+
+        .price-wrapper {
+            display: flex;
+            align-items: baseline;
+            margin-top: auto;
+            padding-bottom: 1.25rem;
+        }
+
+        .price-tag {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: var(--text-heading);
+        }
+
+        .price-tag span { 
+            font-size: 0.85rem; 
+            color: var(--text-muted); 
+            font-weight: 400;
+            margin-left: 0.25rem;
+        }
+
+        /* Interactive UI Buttons */
+        .btn {
+            background-color: var(--accent);
+            color: #ffffff;
+            border: none;
+            padding: 0.9rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.2s ease;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+        }
+
+        .btn:hover { 
+            background-color: #2563eb; 
+            box-shadow: 0 6px 20px var(--accent-glow);
+        }
+        
+        .btn:disabled { 
+            background-color: var(--border); 
+            color: var(--text-muted); 
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        /* Glassmorphic Modal Windows */
+        .modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(5, 7, 12, 0.85);
+            backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            padding: 1.5rem;
+        }
+
+        .modal.active { display: flex; }
+
+        .modal-content {
+            background-color: var(--bg-modal);
+            border: 1px solid var(--border);
+            border-radius: 1.5rem;
+            width: 100%;
+            max-width: 540px;
+            padding: 2.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1.5rem; right: 1.5rem;
+            background: none; border: none;
+            font-size: 1.75rem; cursor: pointer; color: var(--text-muted);
+            transition: color 0.2s;
+        }
+
+        .close-modal:hover { color: var(--text-heading); }
+
+        .modal-title {
+            color: var(--text-heading);
+            font-size: 1.75rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.03em;
+        }
+
+        /* Advanced Forms Layout */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-heading);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.85rem 1.25rem;
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            color: var(--text-heading);
+            outline: none;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .form-control:focus { 
+            border-color: var(--accent); 
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .row { display: flex; gap: 1.25rem; }
+        .row .form-group { flex: 1; }
+
+        .summary-box {
+            background-color: rgba(21, 28, 44, 0.6);
+            padding: 1.25rem;
+            border-radius: 0.85rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border);
+        }
+
+        .summary-total {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: var(--success);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Veloce<span>Vault</span></h1>
+        <div class="header-tag">Enterprise Fleet Deck</div>
+    </header>
+
+    <div class="container">
+        <div class="controls">
+            <input type="text" id="searchBar" class="search-input" placeholder="Filter platform assets by vehicle title, segment, or corporate owner...">
+            <select id="statusFilter" class="filter-select">
+                <option value="all">Display All Fleet</option>
+                <option value="available">Status: Available Only</option>
+                <option value="rented">Status: Currently Out</option>
+            </select>
+        </div>
+
+        <div class="grid" id="fleetGrid"></div>
+    </div>
+
+    <div class="modal" id="paymentModal">
+        <div class="modal-content">
+            <button class="close-modal" id="closeModalBtn">&times;</button>
+            <h2 class="modal-title" id="modalTitle">Secure Checkout</h2>
+            
+            <div class="summary-box">
+                <div class="info-row"><span class="info-label">Vehicle Line Asset</span><span class="info-value" id="summaryName">-</span></div>
+                <div class="info-row"><span class="info-label">Asset Custodian</span><span class="info-value" id="summaryOwner">-</span></div>
+                <div class="info-row"><span class="info-label">Base Dynamic Rate</span><span class="info-value" id="summaryRate">-</span></div>
+                <hr style="margin: 0.85rem 0; border: 0; border-top: 1px solid var(--border);">
+                <div class="info-row" style="align-items: center;"><span class="info-label" style="font-weight: 600;">Total Final Aggregate Due</span><span class="summary-total" id="summaryTotal">$0.00</span></div>
+            </div>
+
+            <form id="paymentForm">
+                <div class="form-group">
+                    <label>Rental Horizon Commitment (Days)</label>
+                    <input type="number" id="rentalDays" class="form-control" min="1" value="1" required>
+                </div>
+                <div class="form-group">
+                    <label>Cardholder Legal Designation</label>
+                    <input type="text" class="form-control" placeholder="Jane Doe" required>
+                </div>
+                <div class="form-group">
+                    <label>Primary Account Number (PAN)</label>
+                    <input type="text" class="form-control" placeholder="xxxx xxxx xxxx xxxx" maxlength="19" required>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <label>Expiration Parameters</label>
+                        <input type="text" class="form-control" placeholder="MM/YY" maxlength="5" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Card Verification Value (CVV)</label>
+                        <input type="password" class="form-control" placeholder="•••" maxlength="3" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn" style="margin-top: 0.5rem;">Execute Settlement Pipeline</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // High-Fidelity Mock Dataset mapped directly to authentic asset imagery URLs
+        const vehicles = [
+            { id: 1, name: "Tesla Model S Plaid", type: "Hyper-Electric Sedan", owner: "Apex Car Rentals Ltd.", rate: 165, available: true, img: "https://images.unsplash.com/photo-1698514326382-603bb5b273de?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
+            { id: 2, name: "Ford Mustang Shelby GT500", type: "Performance Track Coupe", owner: "Velocity Fleet Holdings", rate: 195, available: true, img: "https://images.unsplash.com/photo-1625231334168-35067f8853ed?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
+            { id: 3, name: "Chevrolet Suburban LTZ", type: "Full-Size Premium SUV", owner: "Metro Logistics Group", rate: 140, available: false, img: "https://images.unsplash.com/photo-1597730071805-f87fe40f6796?q=80&w=1171&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
+            { id: 4, name: "BMW M5 Competition", type: "High-Executive Saloon", owner: "Prestige Executive Auto", rate: 210, available: true, img: "https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&q=80&w=600" },
+            { id: 5, name: "Toyota RAV4 Prime AWD", type: "Hybrid Urban Cross", owner: "EcoDrive Transport Co.", rate: 85, available: true, img: "https://images.unsplash.com/photo-1706509234538-9831b1b33d66?q=80&w=1171&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
+            { id: 6, name: "Honda Civic Type R", type: "Track-Tuned Hatchback", owner: "City Core Rides", rate: 95, available: true, img: "https://images.unsplash.com/photo-1686074449582-6374eaebacf3?q=80&w=627&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
+            { id: 8, name: "Mercedes-Benz Sprinter AWD", type: "Custom Modular Van", owner: "Swift Delivery Partners", rate: 175, available: false, img: "https://images.unsplash.com/photo-1613082190644-f2e21566342e?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
+            { id: 9, name: "Porsche 911 Turbo S", type: "Elite Tier Supercar", owner: "Elite Luxury Track", rate: 480, available: true, img: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=600" },
+            { id: 10, name: "Ford F-150 Lightning EV", type: "All-Electric Utility Utility", owner: "Industrial Plant Assets", rate: 135, available: true, img: "https://images.unsplash.com/photo-1614484393797-257ee1d83a1e?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
+            { id: 11, name: "Audi RS Q8", type: "Performance Coupe SUV", owner: "Prestige Executive Auto", rate: 260, available: true, img: "https://images.unsplash.com/photo-1617195920950-1145bf9a9c72?q=80&w=765&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
+            { id: 12, name: "Hyundai Ioniq 5 N", type: "Next-Gen EV Hyper-Hatch", owner: "EcoDrive Transport Co.", rate: 110, available: true, img: "https://images.unsplash.com/photo-1698794827285-dd867346cd87?q=80&w=1113&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
+            { id: 13, name: "Lexus RX 500h F SPORT", type: "Luxury Performance Hybrid", owner: "Silverstone Fleet Corp", rate: 145, available: false, img: "https://images.unsplash.com/photo-1664427356346-c31b46248e71?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
+            { id: 14, name: "Mazda MX-5 Miata RF", type: "Targa Top Roadster", owner: "Velocity Fleet Holdings", rate: 90, available: true, img: "https://images.unsplash.com/photo-1643928342164-2f89c3701f03?q=80&w=627&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
+            { id: 15, name: "Volkswagen ID. Buzz", type: "Modern Electric Microbus", owner: "Apex Car Rentals Ltd.", rate: 150, available: true, img: "https://images.unsplash.com/photo-1767949374145-b450829c5abb?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
+            { id: 17, name: "Volvo XC90 T8 Recharge", type: "Luxury Plug-In Safe Guard", owner: "Nordic Safe Autos", rate: 170, available: true, img: "https://images.unsplash.com/photo-1629897048514-3dd7414fe72a?q=80&w=1174&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
+            { id: 18, name: "Kia Carnival Hi-Limousine", type: "VVIP Presidential MPV", owner: "Metro Logistics Group", rate: 130, available: true, img: "https://images.unsplash.com/photo-1706682783267-c2a92ddac5a6?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
+            { id: 19, name: "Subaru Outback Wilderness", type: "Elevated Adventure Wagon", owner: "Wilderness Outfitters", rate: 95, available: false, img: "https://images.unsplash.com/photo-1641959394465-bb7f5f3f6197?q=80&w=764&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
+            { id: 20, name: "Land Rover Defender 110 V8", type: "Premium Heritage Off-Roader", owner: "Silverstone Fleet Corp", rate: 245, available: true, img: "https://images.unsplash.com/photo-1741905358565-5ae6835ac172?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
+            { id: 21, name: "Nissan GT-R Nismo", type: "High-Performance Supercar", owner: "Velocity Fleet Holdings", rate: 320, available: true, img: "https://images.unsplash.com/photo-1609964729554-a02fb2a04830?q=80&w=765&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
+            { id: 22, name: "Jaguar F-Type R", type: "Luxury Sports Coupe", owner: "Prestige Executive Auto", rate: 280, available: false, img: "https://images.unsplash.com/photo-1717244423739-7ecfe6e1b98d?q=80&w=626&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
+            { id: 23, name: "Chevrolet Corvette Stingray", type: "American Muscle Sports Car", owner: "Metro Logistics Group", rate: 250, available: true, img: "https://images.unsplash.com/photo-1635975479443-123f7d9ed90b?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
+            { id: 24, name: "Porsche Taycan Turbo S", type: "Electric Performance Sedan", owner: "Elite Luxury Track", rate: 400, available: true, img: "https://images.unsplash.com/photo-1708885959562-8fd3be5f4036?q=80&w=735&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
+            { id: 25, name: "Audi e-tron GT RS", type: "High-Performance EV Coupe", owner: "Prestige Executive Auto", rate: 350, available: true, img: "https://images.unsplash.com/photo-1606152421802-db97b9c7a11b?q=80&w=1174&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
+            { id: 26, name: "Hyundai Kona Electric", type: "Compact Urban EV", owner: "EcoDrive Transport Co.", rate: 75, available: true, img: "https://images.unsplash.com/photo-1644907961094-8852aca773d8?q=80&w=1171&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
+            { id: 27, name: "Lexus LC 500h", type: "Luxury Hybrid Coupe", owner: "Silverstone Fleet Corp", rate: 220, available: false, img: "https://images.unsplash.com/photo-1577496549804-8b05f1f67338?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
+            { id: 28, name: "Mazda CX-5 Signature AWD", type: "Premium Crossover SUV", owner: "Velocity Fleet Holdings", rate: 105, available: true, img: "https://images.unsplash.com/photo-1687292624398-32ebab702f1b?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
+            { id: 29, name: "Volkswagen Arteon R-Line", type: "Executive Fastback Sedan", owner: "Apex Car Rentals Ltd.", rate: 130, available: true, img: "https://images.unsplash.com/photo-1767949374145-b450829c5abb?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
+            { id: 30, name: "Volvo XC60 Recharge", type: "Luxury Plug-In SUV", owner: "Nordic Safe Autos", rate: 155, available: true, img: "https://images.unsplash.com/photo-1629896428945-349a9a86e6ba?q=80&w=1174&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
+            { id: 32, name: "Ford Mustang Mach-E GT", type: "Electric Performance SUV", owner: "Velocity Fleet Holdings", rate: 220, available: true, img: "https://images.unsplash.com/photo-1655628266959-12ec3f839a46?q=80&w=1171&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
+            { id: 33, name: "Chevrolet Bolt EUV", type: "Compact Electric Crossover", owner: "Metro Logistics Group", rate: 90, available: true, img: "https://images.unsplash.com/photo-1552519507-88aa2dfa9fdb?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
+            { id: 34, name: "Porsche Macan S", type: "Luxury Compact SUV", owner: "Elite Luxury Track", rate: 250, available: false, img: "https://images.unsplash.com/photo-1615839279696-a6300fe8e872?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
+            { id: 35, name: "Audi Q5 TFSI e", type: "Plug-In Hybrid SUV", owner: "Prestige Executive Auto", rate: 200, available: true, img: "https://images.unsplash.com/photo-1599912027806-cfec9f5944b6?q=80&w=764&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
+            { id: 36, name: "Hyundai Ioniq 6", type: "Electric Fastback Sedan", owner: "EcoDrive Transport Co.", rate: 180, available: true, img: "https://images.unsplash.com/photo-1694676518465-8dc423f0e8da?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
+            { id: 37, name: "Lexus NX 450h+", type: "Luxury Plug-In Hybrid SUV", owner: "Silverstone Fleet Corp", rate: 190, available: true, img: "https://images.unsplash.com/photo-1664427356346-c31b46248e71?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
+            { id: 38, name: "Mazda CX-30 Turbo AWD", type: "Compact Crossover SUV", owner: "Velocity Fleet Holdings", rate: 115, available: true, img: "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&q=80&w=600" },
+            { id: 39, name: "Volkswagen ID.4 GTX", type: "Performance Electric SUV", owner: "Apex Car Rentals Ltd.", rate: 160, available: false, img: "https://images.unsplash.com/photo-1628753495700-603e492d16e4?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
+            { id: 40, name: "Volvo C40 Recharge", type: "Compact Electric Crossover", owner: "Nordic Safe Autos", rate: 140, available: true, img: "https://images.unsplash.com/photo-1629896428945-349a9a86e6ba?q=80&w=2074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
+            { id: 41, name: "Tesla Model X Plaid", type: "High-Performance Electric SUV", owner: "EcoDrive Transport Co.", rate: 350, available: true, img: "https://images.unsplash.com/photo-1573700204813-3dfdaecf677c?q=80&w=735&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
+            { id: 42, name: "Ford F-150 Lightning Pro", type: "Electric Pickup Truck", owner: "Velocity Fleet Holdings", rate: 200, available: true, img: "https://cdn.jdpower.com/JDP_2022%20Ford%20F-150%20Lightning%20Pro%20Blue%20Front%20Quarter%20View.jpg" },
+            { id: 43, name: "Chevrolet Silverado EV RST", type: "All-Electric Full-Size Truck", owner: "Metro Logistics Group", rate: 220, available: false, img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSnXHPNLvgASzz86-RiD7CcAytOTjStl15VH0FxMgwBg5VpTRyJ4fExn_M&s=10" },
+            { id: 44, name: "Porsche Cayenne E-Hybrid", type: "Luxury Plug-In Hybrid SUV", owner: "Elite Luxury Track", rate: 300, available: true, img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRKQVQ-Z4ZIaNk33SW54IWZApAXC5mUhCuz4hgWxwNKF0Cifc6FykY06P7P&s=10" },
+            { id: 45, name: "Audi Q7 TFSI e", type: "Plug-In Hybrid Luxury SUV", owner: "Prestige Executive Auto", rate: 280, available: true, img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSn_aDcFEFvnimdi06icO0MSvLPU_TQMRISpUdNew_eDLJqfyawuYQN0Pr-&s=10" }
+        ];
+
+        let selectedVehicle = null;
+
+        const fleetGrid = document.getElementById('fleetGrid');
+        const searchBar = document.getElementById('searchBar');
+        const statusFilter = document.getElementById('statusFilter');
+        const paymentModal = document.getElementById('paymentModal');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const paymentForm = document.getElementById('paymentForm');
+        const rentalDaysInput = document.getElementById('rentalDays');
+
+        function renderFleet(data) {
+            fleetGrid.innerHTML = '';
+            if(data.length === 0) {
+                fleetGrid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 5rem 0; font-size: 1.1rem;">No digital assets match structural parameters.</div>`;
+                return;
+            }
+            
+            data.forEach(v => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <div class="card-img-wrapper">
+                        <img class="card-img" src="${v.img}" alt="${v.name}" loading="lazy">
+                        <span class="card-badge ${v.available ? 'available' : 'rented'}">${v.available ? 'Available' : 'Rented'}</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="vehicle-type">${v.type}</div>
+                        <div class="vehicle-title">${v.name}</div>
+                        <div class="info-stack">
+                            <div class="info-row">
+                                <span class="info-label">Custodian Record</span>
+                                <span class="info-value">${v.owner}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">System Tracking ID</span>
+                                <span class="info-value">#00${v.id}AX</span>
+                            </div>
+                        </div>
+                        <div class="price-wrapper">
+                            <div class="price-tag">$${v.rate}<span>/ day</span></div>
+                        </div>
+                        <button class="btn" ${v.available ? '' : 'disabled'} onclick="openBooking(${v.id})">
+                            ${v.available ? 'Initialize Lease Protocol' : 'Allocation Locked'}
+                        </button>
+                    </div>
+                `;
+                fleetGrid.appendChild(card);
+            });
+        }
+
+        function filterData() {
+            const query = searchBar.value.toLowerCase();
+            const status = statusFilter.value;
+
+            const filtered = vehicles.filter(v => {
+                const matchesSearch = v.name.toLowerCase().includes(query) || 
+                                      v.type.toLowerCase().includes(query) || 
+                                      v.owner.toLowerCase().includes(query);
+                
+                const matchesStatus = (status === 'all') || 
+                                      (status === 'available' && v.available) || 
+                                      (status === 'rented' && !v.available);
+
+                return matchesSearch && matchesStatus;
+            });
+            renderFleet(filtered);
+        }
+
+        searchBar.addEventListener('input', filterData);
+        statusFilter.addEventListener('change', filterData);
+
+        window.openBooking = function(id) {
+            selectedVehicle = vehicles.find(v => v.id === id);
+            if(!selectedVehicle) return;
+
+            document.getElementById('summaryName').innerText = selectedVehicle.name;
+            document.getElementById('summaryOwner').innerText = selectedVehicle.owner;
+            document.getElementById('summaryRate').innerText = `$${selectedVehicle.rate} / day`;
+            
+            updateTotal();
+            paymentModal.classList.add('active');
+        };
+
+        function updateTotal() {
+            if(!selectedVehicle) return;
+            const days = parseInt(rentalDaysInput.value) || 1;
+            document.getElementById('summaryTotal').innerText = `$${(selectedVehicle.rate * days).toFixed(2)}`;
+        }
+
+        rentalDaysInput.addEventListener('input', updateTotal);
+        closeModalBtn.addEventListener('click', () => paymentModal.classList.remove('active'));
+
+        paymentForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            alert(`TRANSCTION DISPATCH SUCCESSFUL\n\nAuthorization Cryptic Receipt:\n───────────────────────────────────\nAsset Class: ${selectedVehicle.name}\nCalculated Pipeline Settlement: ${document.getElementById('summaryTotal').innerText}\nOperational Horizon: ${rentalDaysInput.value} computational days\n───────────────────────────────────\nDigital signature validated via secure gateway.`);
+            
+            selectedVehicle.available = false;
+            paymentModal.classList.remove('active');
+            paymentForm.reset();
+            filterData();
+        });
+
+        // Initialize Production Environment
+        renderFleet(vehicles);
+    </script>
+</body>
+</html>

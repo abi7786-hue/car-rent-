@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DriveEase Premium Rentals</title>
+    <style>
+        :root {
+            --bg: #0a0e27;
+            --surface: rgba(12, 20, 39, 0.96);
+            --text: #f8fafc;
+            --muted: #94a3b8;
+            --border: rgba(148, 163, 184, 0.22);
+            --accent: #3b82f6;
+            --accent-light: #60a5fa;
+            --accent-dark: #1e40af;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --radius: 20px;
+            --primary-gradient: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            --secondary-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            --dark-gradient: linear-gradient(180deg, rgba(10, 14, 39, 0.95), rgba(5, 8, 20, 0.98));
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        html, body {
+            margin: 0;
+            min-height: 100%;
+            font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(180deg, #0a0e27 0%, #1a1f3a 50%, #0f1425 100%);
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: url('https://images.unsplash.com/photo-1556821552-5f88f24eb6b0?auto=format&fit=crop&w=1920&q=80') center/cover no-repeat;
+            opacity: 0.08;
+            pointer-events: none;
+            z-index: -1;
+            filter: saturate(0.6) brightness(0.3);
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.1), transparent 50%), 
+                        radial-gradient(circle at 80% 80%, rgba(16, 185, 129, 0.08), transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 24px 32px;
+            background: linear-gradient(90deg, rgba(10, 14, 39, 0.98), rgba(15, 23, 55, 0.95));
+            border-bottom: 1px solid rgba(59, 130, 246, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .brand {
+            font-size: 1.3rem;
+            font-weight: 800;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.02em;
+            text-decoration: none;
+        }
+
+        nav ul {
+            display: flex;
+            gap: 24px;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav a {
+            color: var(--muted);
+            font-size: 0.95rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        nav a:hover { 
+            color: var(--accent-light);
+            transform: translateY(-2px);
+        }
+
+        .hero {
+            position: relative;
+            background-image: linear-gradient(135deg, rgba(10, 14, 39, 0.88), rgba(59, 130, 246, 0.25)), 
+                              url('https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center right;
+            padding: 120px 32px 80px;
+            text-align: center;
+            color: white;
+            box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.5), inset 0 -2px 10px rgba(59, 130, 246, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 70% 30%, rgba(59, 130, 246, 0.1), transparent 60%);
+            pointer-events: none;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.4rem, 4vw, 3.8rem);
+            line-height: 1.02;
+            margin: 0 0 18px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #ffffff, #e0e7ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            position: relative;
+            z-index: 1;
+            letter-spacing: -1px;
+        }
+
+        .hero p {
+            max-width: 700px;
+            margin: 0 auto;
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 1.08rem;
+            line-height: 1.8;
+            font-weight: 500;
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .page {
+            max-width: 1180px;
+            margin: -40px auto 32px;
+            padding: 0 24px 32px;
+        }
+
+        .panel {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.96), rgba(20, 30, 60, 0.92));
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        }
+
+        .panel-header { 
+            padding: 32px; 
+            background: linear-gradient(90deg, rgba(59, 130, 246, 0.08), rgba(16, 185, 129, 0.05));
+            border-bottom: 1px solid rgba(59, 130, 246, 0.15);
+        }
+        .panel-header h2 { 
+            margin: 0 0 10px; 
+            font-size: 1.75rem; 
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-light), var(--success));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .panel-header p { 
+            margin: 0; 
+            color: rgba(148, 163, 184, 0.9); 
+            line-height: 1.8;
+            font-weight: 500;
+        }
+
+        .message {
+            display: none;
+            margin-top: 24px;
+            padding: 16px 20px;
+            border-radius: 16px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            border-left: 4px solid;
+        }
+        .message.success { 
+            background: rgba(16, 185, 129, 0.15); 
+            color: #10b981;
+            border-left-color: #10b981;
+        }
+        .message.error { 
+            background: rgba(239, 68, 68, 0.15); 
+            color: #ef4444;
+            border-left-color: #ef4444;
+        }
+
+        .vehicle-grid {
+            display: grid;
+            gap: 24px;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            padding: 0 32px 32px;
+        }
+
+        .vehicle-card {
+            border-radius: 24px;
+            overflow: hidden;
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.97), rgba(20, 30, 60, 0.94));
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            display: flex;
+            flex-direction: column;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .vehicle-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(59, 130, 246, 0.5);
+            box-shadow: 0 20px 60px rgba(59, 130, 246, 0.25);
+        }
+
+        .vehicle-image {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            object-fit: cover;
+            filter: brightness(0.95);
+        }
+
+        .vehicle-card:hover .vehicle-image {
+            filter: brightness(1.05);
+        }
+
+        .vehicle-body {
+            padding: 24px;
+            display: grid;
+            gap: 18px;
+        }
+
+        .vehicle-title { 
+            margin: 0; 
+            font-size: 1.2rem; 
+            font-weight: 700;
+            color: var(--text);
+        }
+        .vehicle-meta { 
+            color: var(--muted); 
+            font-size: 0.95rem; 
+            display: grid; 
+            gap: 4px;
+            font-weight: 500;
+        }
+
+        .vehicle-footer { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 14px; 
+        }
+        
+        .status {
+            align-self: flex-start;
+            padding: 8px 14px;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .available { 
+            background: rgba(16, 185, 129, 0.2); 
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.4);
+        }
+        .rented { 
+            background: rgba(239, 68, 68, 0.2); 
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.4);
+        }
+
+        .vehicle-actions { display: grid; gap: 12px; width: 100%; }
+        
+        .input-group { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 6px; 
+        }
+        .input-group label { 
+            font-size: 0.85rem; 
+            color: var(--muted);
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+        
+        .vehicle-actions input[type="number"],
+        #quickVehicle {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 12px;
+            border: 1.5px solid rgba(59, 130, 246, 0.3);
+            color: var(--text);
+            background: rgba(255, 255, 255, 0.06);
+            outline: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        #quickVehicle {
+            color: #000000;
+            background: #C2B280;
+        }
+
+        #quickDays {
+            color: #000000;
+            background: #C2B280;
+        }
+
+        .vehicle-actions input[type="number"]:focus,
+        #quickVehicle:focus,
+        #quickDays:focus {
+            border-color: var(--accent-light);
+            background: #D4C5A0;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .vehicle-actions input[type="number"]:hover,
+        #quickVehicle:hover,
+        #quickDays:hover {
+            border-color: rgba(59, 130, 246, 0.5);
+            background: #D4C5A0;
+        }
+
+        .collections-grid {
+            display: grid;
+            gap: 24px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            padding: 0 32px 32px;
+        }
+
+        .collection-card {
+            border-radius: 24px;
+            overflow: hidden;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.12), rgba(16, 185, 129, 0.08));
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        .collection-card:hover {
+            transform: translateY(-6px) scale(1.02);
+            border-color: rgba(59, 130, 246, 0.6);
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.18), rgba(16, 185, 129, 0.12));
+            box-shadow: 0 20px 50px rgba(59, 130, 246, 0.3);
+        }
+
+        .collection-header {
+            padding: 32px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(10, 14, 39, 0.85), rgba(20, 30, 60, 0.75));
+            min-height: 220px;
+        }
+
+        .collection-icon {
+            font-size: 3.5rem;
+            margin-bottom: 14px;
+            display: block;
+            filter: drop-shadow(0 4px 12px rgba(59, 130, 246, 0.3));
+        }
+
+        .collection-name {
+            margin: 0 0 10px;
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-light), var(--success));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .collection-count {
+            color: var(--muted);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .price-total { 
+            font-weight: 700; 
+            color: var(--accent-light); 
+            font-size: 1.1rem;
+            padding: 8px 0;
+        }
+
+        .btn {
+            width: 100%;
+            border: none;
+            border-radius: 14px;
+            padding: 14px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            letter-spacing: 0.5px;
+        }
+        .btn:hover { 
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+        .btn:active {
+            transform: translateY(0);
+        }
+        .btn-rent { 
+            background: var(--primary-gradient);
+            color: white;
+            font-weight: 800;
+        }
+        .btn-rent:hover {
+            box-shadow: 0 12px 32px rgba(59, 130, 246, 0.4);
+        }
+
+        #quickBookButton {
+            background: #000000 !important;
+            color: white;
+        }
+
+        #quickBookButton:hover {
+            background: #333333 !important;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6) !important;
+        }
+        .btn-return { 
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            font-weight: 800;
+        }
+        .btn-return:hover {
+            box-shadow: 0 12px 32px rgba(239, 68, 68, 0.4);
+        }
+
+        footer { 
+            padding: 32px; 
+            text-align: center; 
+            color: var(--muted); 
+            font-size: 0.95rem;
+            border-top: 1px solid rgba(59, 130, 246, 0.15);
+            background: linear-gradient(90deg, rgba(10, 14, 39, 0.95), rgba(15, 23, 55, 0.92));
+            margin-top: 40px;
+        }
+
+        /* Premium styling enhancements */
+        .panel:first-of-type {
+            margin-top: 8px;
+        }
+
+        .panel {
+            position: relative;
+        }
+
+        .panel::before {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.5), transparent);
+            pointer-events: none;
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(10, 14, 39, 0.5);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(59, 130, 246, 0.4);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(59, 130, 246, 0.6);
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <a href="#" class="brand">DRIVEEASE</a>
+    <nav>
+        <ul>
+            <li><a href="#fleet">Our Fleet</a></li>
+            <li><a href="#collections">Collections</a></li>
+        </ul>
+    </nav>
+</header>
+
+<section class="hero">
+    <h1>Premium Luxury Vehicle Rentals</h1>
+    <p>Experience the finest selection of luxury cars from Porsche, Mercedes, BMW, and more. Book instantly with transparent pricing and exceptional service.</p>
+</section>
+
+<main class="page">
+    <section class="panel">
+        <div class="panel-header">
+            <h2>Quick Booking</h2>
+            <p>Select a premium vehicle and rental duration for instant reservation.</p>
+        </div>
+        <div style="padding: 0 32px 32px;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+                <div class="input-group">
+                    <label>Select Vehicle:</label>
+                    <select id="quickVehicle">
+                        <option value="">Choose a car...</option>
+                        <option value="porsche-911">Porsche</option>
+                        <option value="mercedes-s-class">Mercedes</option>
+                        <option value="bmw-7-series">BMW</option>
+                        <option value="audi-a8">Audi</option>
+                        <option value="benz">Benz</option>
+                        <option value="ford mustang">Ford Mustang</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Rental Duration (Days):</label>
+                    <input type="number" id="quickDays" min="1" value="1">
+                </div>
+                <div class="input-group" style="justify-content: flex-end;">
+                    <label style="opacity: 0;">.</label>
+                    <button id="quickBookButton" class="btn btn-rent" onclick="quickBook()" style="margin: 0;">Reserve Now</button>
+                </div>
+            </div>
+            <div id="quickMessage" class="message" style="margin-top: 16px;"></div>
+        </div>
+    </section>
+
+    <section class="panel" id="collections">
+        <div class="panel-header">
+            <h2>Browse Collections</h2>
+            <p>Discover our premium vehicle categories tailored to your needs.</p>
+        </div>
+        <div id="collectionsContainer" class="collections-grid"></div>
+    </section>
+
+    <section class="panel" id="fleet">
+        <div class="panel-header">
+            <h2>Available Fleet Catalog</h2>
+            <p>Explore our curated selection of luxury and premium vehicles with real-time availability and transparent pricing.</p>
+            <div id="message" class="message"></div>
+        </div>
+        <div id="vehicles" class="vehicle-grid"></div>
+    </section>
+</main>
+
+<footer>
+    <p style="margin: 0; font-weight: 600;">© 2026 DRIVEEASE Premium Rentals. All rights reserved.</p>
+    <p style="margin: 8px 0 0 0; font-size: 0.9rem; color: rgba(148, 163, 184, 0.7);">Luxury. Reliability. Excellence.</p>
+</footer>
+
+<script>
+    const apiBase = 'http://localhost:3000/api';
+    const vehiclesEl = document.getElementById('vehicles');
+    const messageEl = document.getElementById('message');
+
+    function showMessage(text, type = 'success') {
+        messageEl.textContent = text;
+        messageEl.className = `message ${type}`;
+        messageEl.style.display = 'block';
+    }
+
+    function showQuickMessage(text, type = 'success') {
+        const quickMessageEl = document.getElementById('quickMessage');
+        quickMessageEl.textContent = text;
+        quickMessageEl.className = `message ${type}`;
+        quickMessageEl.style.display = 'block';
+    }
+
+    async function fetchVehicles() {
+        try {
+            const res = await fetch(`${apiBase}/vehicles`);
+            const data = await res.json();
+            renderVehicles(data);
+            updateQuickBookingDropdown(data);
+            renderCollections(data);
+        } catch (err) {
+            showMessage('Backend system offline. Ensure backend server is running.', 'error');
+        }
+    }
+
+    function renderCollections(vehicles) {
+        const collectionsContainer = document.getElementById('collectionsContainer');
+        
+        // Group vehicles by category
+        const collections = {};
+        const categoryImages = {
+            'Budget': 'https://images.unsplash.com/photo-1552820728-8ac41f1ce891?auto=format&fit=crop&w=1200&q=80',
+            'Mid-Range': 'https://images.unsplash.com/photo-1567818735868-e71b99932e29?auto=format&fit=crop&w=1200&q=80',
+            'Luxury': 'https://images.unsplash.com/photo-1493238792000-8311db92a54e?auto=format&fit=crop&w=1200&q=80'
+        };
+
+        // Define category order (budget first, then mid-range, then luxury)
+        const categoryOrder = ['Budget', 'Mid-Range', 'Luxury'];
+
+        vehicles.forEach(v => {
+            // Categorize vehicles
+            let category = 'Other';
+            const brand = v.model.split(' ')[0];
+
+            if (['Hyundai', 'Tata', 'Maruti', 'Renault'].includes(brand)) {
+                category = 'Budget';
+            } else if (['Mahindra', 'Honda', 'Hyundai'].includes(brand) && v.price_per_day >= 1800) {
+                category = 'Mid-Range';
+            } else if (['BMW', 'Mercedes', 'Audi', 'Range', 'Tesla', 'Jaguar', 'Aston'].includes(brand)) {
+                category = 'Luxury';
+            } else if (v.price_per_day >= 8000) {
+                category = 'Luxury';
+            } else if (v.price_per_day >= 1500) {
+                category = 'Mid-Range';
+            } else {
+                category = 'Budget';
+            }
+
+            if (!collections[category]) {
+                collections[category] = [];
+            }
+            collections[category].push(v);
+        });
+
+        // Create collection cards sorted by category order
+        collectionsContainer.innerHTML = categoryOrder.map(category => {
+            if (!collections[category]) return '';
+            
+            const cars = collections[category];
+            const icon = {
+                'Budget': '💰',
+                'Mid-Range': '🚗',
+                'Luxury': '👑'
+            }[category] || '🚗';
+            const availableCount = cars.filter(c => c.is_available).length;
+            
+            // Use different background images for each category
+            let backgroundImage = 'https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=1200&q=80';
+            if (category === 'Budget') {
+                backgroundImage = 'https://images.unsplash.com/photo-1552820728-8ac41f1ce891?auto=format&fit=crop&w=1200&q=80';
+            } else if (category === 'Mid-Range') {
+                backgroundImage = 'https://images.unsplash.com/photo-1567818735868-e71b99932e29?auto=format&fit=crop&w=1200&q=80';
+            } else if (category === 'Luxury') {
+                backgroundImage = 'https://images.unsplash.com/photo-1493238792000-8311db92a54e?auto=format&fit=crop&w=1200&q=80';
+            }
+            
+            return `
+                <div class="collection-card" onclick="filterByCollection('${category}')" style="background-image: linear-gradient(135deg, rgba(59, 130, 246, 0.4), rgba(16, 185, 129, 0.3)), url('${backgroundImage}'); background-size: cover; background-position: center; background-attachment: fixed;">
+                    <div class="collection-header">
+                        <span class="collection-icon">${icon}</span>
+                        <h3 class="collection-name">${category}</h3>
+                        <span class="collection-count">${availableCount} available • ${cars.length} total</span>
+                    </div>
+                </div>
+            `;
+        }).filter(Boolean).join('');
+    }
+
+    function filterByCollection(category) {
+        // Scroll to fleet section
+        document.getElementById('fleet').scrollIntoView({ behavior: 'smooth' });
+        
+        // Show message
+        showMessage(`Showing ${category} collection`, 'success');
+    }
+
+    function updateQuickBookingDropdown(vehicles) {
+        const dropdown = document.getElementById('quickVehicle');
+        const availableVehicles = vehicles.filter(v => v.is_available);
+        
+        // Comprehensive sample cars list with luxury and premium brands
+        const sampleCars = [
+            // Ultra Luxury
+            { model: 'Porsche 911 Turbo', price: 8500, id: 'porsche-911-001' },
+            { model: 'Porsche Cayenne', price: 7200, id: 'porsche-cayenne-001' },
+            { model: 'Ferrari F8 Tributo', price: 12000, id: 'ferrari-f8-001' },
+            { model: 'Lamborghini Huracán', price: 11500, id: 'lamborghini-001' },
+            { model: 'Rolls Royce Ghost', price: 15000, id: 'rolls-royce-001' },
+            
+            // Premium Luxury
+            { model: 'BMW M5', price: 6500, id: 'bmw-m5-001' },
+            { model: 'BMW 7 Series', price: 5500, id: 'bmw-7-001' },
+            { model: 'BMW M440i', price: 4800, id: 'bmw-m440-001' },
+            { model: 'Mercedes-AMG E63', price: 6800, id: 'merc-amg-e63-001' },
+            { model: 'Mercedes S-Class', price: 5800, id: 'merc-s-class-001' },
+            { model: 'Mercedes E-Class', price: 4800, id: 'merc-e-001' },
+            { model: 'Mercedes C-Class', price: 3500, id: 'merc-c-001' },
+            { model: 'Audi RS7', price: 6200, id: 'audi-rs7-001' },
+            { model: 'Audi A8', price: 5200, id: 'audi-a8-001' },
+            { model: 'Audi A6', price: 4200, id: 'audi-a6-001' },
+            { model: 'Audi A4', price: 3200, id: 'audi-a4-001' },
+            
+            // Electric & Modern Luxury
+            { model: 'Tesla Model S Plaid', price: 7500, id: 'tesla-s-plaid-001' },
+            { model: 'Tesla Model S', price: 6000, id: 'tesla-s-001' },
+            { model: 'Tesla Model X', price: 5500, id: 'tesla-x-001' },
+            
+            // Sport & Performance
+            { model: 'Jaguar XJ', price: 5000, id: 'jaguar-xj-001' },
+            { model: 'Jaguar F-PACE', price: 4500, id: 'jaguar-fpace-001' },
+            { model: 'Range Rover Sport', price: 6800, id: 'range-sport-001' },
+            { model: 'Range Rover', price: 7500, id: 'range-rover-001' },
+            { model: 'Land Rover Discovery', price: 5500, id: 'land-rover-001' },
+            
+            // Premium SUVs
+            { model: 'Bentley Bentayga', price: 9000, id: 'bentley-001' },
+            { model: 'Aston Martin DBX', price: 8800, id: 'aston-martin-001' },
+            
+            // Mid-Range Premium
+            { model: 'Volvo S90', price: 3800, id: 'volvo-s90-001' },
+            { model: 'Lexus RX 350', price: 4200, id: 'lexus-rx-001' },
+            { model: 'Infiniti Q50', price: 3600, id: 'infiniti-001' },
+            
+            // Indian Premium
+            { model: 'Honda Accord', price: 3000, id: 'honda-accord-001' },
+            { model: 'Honda City', price: 2500, id: 'city-001' },
+            { model: 'Skoda Superb', price: 3400, id: 'skoda-001' },
+            
+            // Mid-Range
+            { model: 'Hyundai Creta', price: 2200, id: 'creta-001' },
+            { model: 'Hyundai Verna', price: 1800, id: 'verna-001' },
+            { model: 'Tata Nexon', price: 2000, id: 'nexon-001' },
+            { model: 'Tata Harrier', price: 2400, id: 'harrier-001' },
+            { model: 'Maruti Brezza', price: 1900, id: 'brezza-001' },
+            
+            // Budget Friendly
+            { model: 'Maruti Swift', price: 1500, id: 'swift-001' },
+            { model: 'Maruti Alto', price: 1200, id: 'alto-001' },
+            { model: 'Hyundai i20', price: 1600, id: 'i20-001' }
+        ];
+        
+        dropdown.innerHTML = '<option value="">Choose a car...</option>';
+        
+        // Add API vehicles first
+        availableVehicles.forEach(v => {
+            const option = document.createElement('option');
+            option.value = JSON.stringify({ id: v.vehicle_id, price: v.price_per_day, model: v.model });
+            option.textContent = `${v.model} (₹${v.price_per_day}/day)`;
+            dropdown.appendChild(option);
+        });
+        
+        // Add sample cars (always show them for demo/reference)
+        sampleCars.forEach(car => {
+            const option = document.createElement('option');
+            option.value = JSON.stringify({ id: car.id, price: car.price, model: car.model });
+            option.textContent = `${car.model} (₹${car.price}/day)`;
+            dropdown.appendChild(option);
+        });
+    }
+
+    function quickBook() {
+        const vehicleSelect = document.getElementById('quickVehicle');
+        const daysInput = document.getElementById('quickDays');
+
+        if (!vehicleSelect.value) {
+            showQuickMessage('Please select a vehicle', 'error');
+            return;
+        }
+
+        const vehicle = JSON.parse(vehicleSelect.value);
+        const days = parseInt(daysInput.value) || 1;
+
+        if (days < 1) {
+            showQuickMessage('Days must be at least 1', 'error');
+            return;
+        }
+
+        rentVehicleQuick(vehicle.id, days, vehicle.model);
+    }
+
+    async function rentVehicleQuick(id, days, model) {
+        try {
+            const res = await fetch(`${apiBase}/rent`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ vehicle_id: id, days })
+            });
+            const data = await res.json();
+            if (res.ok) { 
+                showQuickMessage(`✓ ${model} booked for ${days} day${days > 1 ? 's' : ''}!`, 'success'); 
+                document.getElementById('quickVehicle').value = '';
+                document.getElementById('quickDays').value = '1';
+                fetchVehicles(); 
+            } 
+            else { throw new Error(data.error); }
+        } catch (err) { 
+            showQuickMessage(err.message, 'error'); 
+        }
+    }
+
+    function renderVehicles(vehicles) {
+        vehiclesEl.innerHTML = vehicles.map(v => `
+            <div class="vehicle-card">
+                <img src="${v.image || 'https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=600&q=80'}" class="vehicle-image">
+                <div class="vehicle-body">
+                    <div>
+                        <p class="vehicle-title">${v.model}</p>
+                        <div class="vehicle-meta">
+                            <span>ID: ${v.vehicle_id}</span>
+                            <span>Daily Rate: ₹${v.price_per_day}</span>
+                        </div>
+                    </div>
+                    <div class="vehicle-footer">
+                        <span class="status ${v.is_available ? 'available' : 'rented'}">${v.is_available ? 'Available' : 'Rented'}</span>
+                        ${v.is_available ? `
+                            <div class="vehicle-actions">
+                                <div class="input-group">
+                                    <label>Select Rental Duration (Days):</label>
+                                    <input type="number" id="days-${v.vehicle_id}" min="1" value="1" data-price="${v.price_per_day}" oninput="updateTotal('${v.vehicle_id}')">
+                                </div>
+                                <div class="price-total">Total Estimate: ₹<span id="total-${v.vehicle_id}">${v.price_per_day}</span></div>
+                                <button class="btn btn-rent" onclick="rentVehicle('${v.vehicle_id}')">Reserve Now</button>
+                            </div>
+                        ` : `
+                            <button class="btn btn-return" onclick="returnVehicle('${v.vehicle_id}')">Process Fleet Return</button>
+                        `}
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function updateTotal(id) {
+        const input = document.getElementById(`days-${id}`);
+        const totalSpan = document.getElementById(`total-${id}`);
+        const days = Math.max(1, parseInt(input.value) || 1);
+        const price = parseInt(input.dataset.price);
+        totalSpan.textContent = (days * price).toLocaleString('en-IN');
+    }
+
+    async function rentVehicle(id) {
+        const days = parseInt(document.getElementById(`days-${id}`).value) || 1;
+        try {
+            const res = await fetch(`${apiBase}/rent`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ vehicle_id: id, days })
+            });
+            const data = await res.json();
+            if (res.ok) { showMessage(data.message, 'success'); fetchVehicles(); } 
+            else { throw new Error(data.error); }
+        } catch (err) { showMessage(err.message, 'error'); }
+    }
+
+    async function returnVehicle(id) {
+        try {
+            const res = await fetch(`${apiBase}/return`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ vehicle_id: id })
+            });
+            const data = await res.json();
+            if (res.ok) { showMessage(data.message, 'success'); fetchVehicles(); } 
+            else { throw new Error(data.error); }
+        } catch (err) { showMessage(err.message, 'error'); }
+    }
+
+    document.addEventListener('DOMContentLoaded', fetchVehicles);
+</script>
+</body>
+</html>
